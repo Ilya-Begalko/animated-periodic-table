@@ -30,6 +30,7 @@ const clipPathD = `M${[...clipCords, clipCords[0]]
 
 const svgRoot = container.append("svg");
 setAttrs(svgRoot, { width: "0px", height: "0px" });
+setStyle(svgRoot, { position: "absolute" });
 const defs = svgRoot.append("defs");
 const clipPath = defs.append("clipPath");
 setAttrs(clipPath, { id: "clipPath" });
@@ -52,15 +53,18 @@ class Atom {
     }
 }
 
+const verticalQuery = window.matchMedia(
+    "(max-width: 800px) and (orientation: portrait)"
+);
+
 class Element {
-    constructor(x, y, name, number, phase, color) {
+    constructor(ix, iy, name, number, phase, color) {
         this.root = container.append("div");
-        setStyle(this.root, {
-            width: "5vw",
-            height: "5vw",
-            transform: `translate(${x}vw, ${y}vw)`,
-            position: "absolute"
-        });
+        setAttrs(this.root, { class: "element" });
+
+        this.ix = ix;
+        this.iy = iy;
+        this.layout(verticalQuery.matches);
 
         this.phase = phase;
 
@@ -111,6 +115,16 @@ class Element {
         setStyle(this.number, { color: `${color}88` });
     }
 
+    layout(vertical) {
+        const col = vertical ? this.iy : this.ix;
+        const row = vertical ? this.ix : this.iy;
+        const x = col * 4.8 + ((row + 1) % 2) * 2.5 - 2;
+        const y = row * 4.5 - 2;
+        setStyle(this.root, {
+            transform: `translate(calc(${x} * var(--u)), calc(${y} * var(--u)))`
+        });
+    }
+
     update(t, path1, path2) {
         if (this.phase === "Liquid") {
             this.updateLiquid(path1, path2);
@@ -151,13 +165,13 @@ function createElements(data) {
         const name = element.symbol;
         const number = element.number;
         const phase = element.phase;
-        const ix = element.xpos;
-        const iy = element.ypos;
-        const x = ix * 4.8 + ((iy + 1) % 2) * 2.5 - 2;
-        const y = iy * 4.5 - 4;
         const color = categoryColors[category] || "#93abd3";
 
-        return new Element(x, y, name, number, phase, color);
+        return new Element(element.xpos, element.ypos, name, number, phase, color);
+    });
+
+    verticalQuery.addEventListener("change", (e) => {
+        elements.forEach((element) => element.layout(e.matches));
     });
 }
 

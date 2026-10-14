@@ -1,20 +1,33 @@
 @import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@700&display=swap");
 
+:root {
+    --u: max(1vw, 8px);
+}
+
 body {
     margin: 0;
-    justify-content: center;
-    display: flex;
     background: #222831;
 }
 
+.scroller {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
 #container {
-    width: 95vw;
-    height: 55vw;
+    width: calc(95 * var(--u));
+    height: calc(55 * var(--u));
     background: #262c35;
-    margin-top: 5vw;
+    margin: calc(5 * var(--u)) auto;
     position: relative;
     border-radius: 5px;
-    margin-bottom: 5vw;
+}
+
+.element {
+    width: calc(5 * var(--u));
+    height: calc(5 * var(--u));
+    position: absolute;
 }
 
 .element-name {
@@ -22,7 +35,7 @@ body {
     left: 50%;
     top: 40%;
     transform: translate(-50%, -50%);
-    font-size: 1.5vw;
+    font-size: calc(1.5 * var(--u));
     font-family: "Merriweather", serif;
     font-weight: 700;
 }
@@ -32,7 +45,7 @@ body {
     left: 50%;
     top: 15%;
     transform: translate(-50%, -50%);
-    font-size: 0.6vw;
+    font-size: max(calc(0.6 * var(--u)), 7px);
 }
 
 .legend {
@@ -40,7 +53,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    font-size: 0.8vw;
+    font-size: calc(0.8 * var(--u));
     font-family: "Merriweather", serif;
     font-weight: 700;
 }
@@ -48,4 +61,22 @@ body {
 .svg {
     width: 100%;
     height: 100%;
+}
+
+@media (max-width: 800px) {
+    #container {
+        margin: 16px;
+    }
+}
+
+@media (max-width: 800px) and (orientation: portrait) {
+    :root {
+        --u: calc((100vw - 16px) / 56);
+    }
+
+    #container {
+        width: calc(56 * var(--u));
+        height: calc(86 * var(--u));
+        margin: 8px auto;
+    }
 }
